@@ -3,6 +3,7 @@ This project demonstrates the implementation of a secure VNet-to-VNet VPN Gatewa
 The objective of this lab was to understand how Azure Virtual Network Gateways establish encrypted communication between separate virtual networks located in different regions.
 
 This project focuses on:
+
 -----------------
 Azure VPN Gateway
 -----------------
