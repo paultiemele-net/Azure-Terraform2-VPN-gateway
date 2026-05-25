@@ -1,0 +1,1 @@
+admin_password = "Type-19981998"
