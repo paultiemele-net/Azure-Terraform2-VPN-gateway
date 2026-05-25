@@ -1,154 +1,83 @@
-This project is a secure multi-region Azure networking architecture fully deployed with Terraform.
-The goal of this lab was to practice real-world cloud networking and security concepts used in enterprise environments, including:
+This project demonstrates the implementation of a secure VNet-to-VNet VPN Gateway architecture in Microsoft Azure using Terraform.
 
-Hub and Spoke topology
-Azure Firewall
-Route Tables (UDR)
-VPN Gateway
-Bastion
-Private Endpoint
-Private DNS Zones
-Storage Account hardening
-NSG segmentation
-Terraform Infrastructure as Code (IaC)
+The objective of this lab was to understand how Azure Virtual Network Gateways establish encrypted communication between separate virtual networks located in different regions.
 
-The environment was designed to simulate a production-style Azure infrastructure with secure communication between VNets, private services, and controlled administrative access.
+This project focuses on:
+-----------------
+Azure VPN Gateway
+-----------------
 
-------------
+Site-to-Site style VNet communication
+Bidirectional VPN connections
+GatewaySubnet configuration
+Secure network routing
+Infrastructure as Code with Terraform
 Architecture
-------------
-
-The lab contains three Azure regions:
-
+Regions Used
 Region	Purpose
-Central US (CUS)	Spoke VNet
-North Central US (NCUS)	Spoke VNet
-Mexico Central (MEX)	Hub VNet
+Central US (CUS)	Primary VNet
+North Central US (NCUS)	Secondary VNet
 
 ---------------
 Main Components
 ---------------
+
 Networking
-
-Multiple VNets
-Multiple subnets
-Hub-and-Spoke topology
-VNet Peering
-VPN Gateway communication
-User Defined Routes (UDR)
-Security
-Azure Firewall
-Firewall Policy
-Firewall Rules
-Network Security Groups (NSGs)
-Bastion private administration
-Private DNS Zones
-Private Endpoint for Storage Account
-Storage Account with public access disabled
-Compute
-Windows Virtual Machines
-Dedicated NICs
-Private IP addressing
-Storage
-Azure Storage Account
-Azure File Share
-Private Endpoint access only
-Private DNS integration
-Features Implemented
-Hub and Spoke Topology
-
-The Mexico VNet acts as the Hub.
-The CUS and NCUS VNets act as Spokes.
-Traffic between spokes is routed through the Azure Firewall located in the Hub VNet.
-
-Azure Firewall
-
-Implemented:
-
-Firewall Policy
-Network Rule Collection
-Spoke-to-Spoke traffic inspection
-UDR routing through firewall private IP
-VPN Gateway
-
-Implemented VNet-to-VNet VPN communication between:
-
-VNet-CUS
-VNet-NCUS
-
-Configured:
-
-Bidirectional VPN connections
-Shared keys
+Azure Virtual Networks
 GatewaySubnet
-Azure Bastion
+VNet-to-VNet VPN
+Public IPs
+Bidirectional VPN communication
+Security
+Encrypted communication between VNets
+Shared authentication keys
+Controlled routing between regions
+Infrastructure as Code
+Terraform deployment
+Reusable resource structure
+Automated provisioning
+Features Implemented
+GatewaySubnet
 
-Implemented Azure Bastion for secure VM administration.
+Each VNet contains a dedicated:
 
-Benefits:
+GatewaySubnet
 
-No public IPs on production VMs
-RDP over Azure Portal
-Reduced attack surface
-Private Endpoint
+This subnet is required for Azure Virtual Network Gateway deployment.
 
-Implemented a Private Endpoint for Azure Storage File Share.
-
-Benefits:
-
-Storage accessible privately only
-No public internet exposure
-Integrated with Private DNS Zone
-Private DNS Zones
+Virtual Network Gateway
 
 Implemented:
 
-Storage Private DNS Zone
-Internal VM DNS Zone with auto-registration
+Route-based VPN Gateway
+Azure VPN Gateway SKU
+Dynamic private IP allocation
+Public IP association
+Bidirectional Connections
 
-Examples:
+Two VPN connections were configured:
 
-privatelink.file.core.windows.net
-internal.mex.local
+Connection	Purpose
+CUS → NCUS	Outbound communication
+NCUS → CUS	Return traffic communication
+
+This ensures full bidirectional communication between VNets.
+
+Shared Key Authentication
+
+VPN connections use a shared key to establish trust between gateways.
+
+Example:
+
+shared_key = "SuperSecureSharedKey123!"
 Terraform Concepts Used
 Terraform Resources
 
 Examples:
 
-azurerm_virtual_network
-azurerm_firewall
-azurerm_private_endpoint
-azurerm_bastion_host
-azurerm_route_table
 azurerm_virtual_network_gateway
+azurerm_virtual_network_gateway_connection
+azurerm_public_ip
+azurerm_subnet
 Terraform Features
 
-Used:
-
-Variables
-Outputs
-Locals
-Count
-Resource associations
-Modular resource organization
-Security Design Decisions
-Bastion Instead of Public IPs
-
-Virtual Machines were designed to avoid direct public exposure.
-
-Administrative access is performed securely through Azure Bastion.
-
-Private Storage Access
-
-Storage Accounts were configured with:
-
-public_network_access_enabled = false
-
-Access is allowed only through:
-
-Private Endpoint
-Private DNS
-Internal Azure networking
-Firewall Routing
-
-User Defined Routes (UDRs) force spoke traffic through the Azure Firewall for centralized inspection and filtering.
